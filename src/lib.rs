@@ -18,6 +18,7 @@ pub use crate::parse::{
     Annotation,
 };
 
+#[derive(Debug, Clone)]
 pub struct Sample {
     pub image_path: PathBuf,
     pub annotation: Annotation,
@@ -66,7 +67,12 @@ pub fn load<P: AsRef<Path>>(dataset_dir: P) -> Fallible<Vec<Sample>> {
             // Verify if filename matches
             let mut file_name = image_name.clone();
             file_name.push(".jpg");
-            ensure!(file_name == annotation.filename.as_str(), "Expect \"{}\" in <filename>, but get \"{}\"", file_name.to_str().unwrap(), annotation.filename);
+            ensure!(
+                file_name == annotation.filename.as_str(),
+                "Expect \"{}\" in <filename>, but get \"{}\"",
+                file_name.to_str().unwrap(),
+                annotation.filename,
+            );
 
             let sample = Sample {
                 image_path,
