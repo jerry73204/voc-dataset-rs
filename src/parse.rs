@@ -2,11 +2,13 @@ use std::collections::HashMap;
 use failure::Fallible;
 use minidom::Element;
 
+/// Correspond to <pose> in annotation XML.
 #[derive(Debug, Clone, Copy)]
 pub enum Pose {
     Frontal, Rear, Left, Right, Unspecified,
 }
 
+/// Correspond to <bndbox> in annotation XML.
 #[derive(Debug, Clone, Copy)]
 pub struct BndBox {
     pub xmin: f64,
@@ -15,11 +17,13 @@ pub struct BndBox {
     pub ymax: f64,
 }
 
+/// Correspond to <object> in annotation XML.
 #[derive(Debug, Clone)]
 pub struct Object {
     pub name: String,
     pub pose: Pose,
     pub bndbox: BndBox,
+    // TODO Implement actions
     // pub actions: Option<>,
     pub part: HashMap<String, BndBox>,
     pub truncated: Option<bool>,
@@ -28,6 +32,7 @@ pub struct Object {
     pub point: Option<(f64, f64)>,
 }
 
+/// Correspond to <source> in annotation XML.
 #[derive(Debug, Clone)]
 pub struct Source {
     pub database: String,
@@ -35,6 +40,7 @@ pub struct Source {
     pub image: String,
 }
 
+/// Parsed annotation XML.
 #[derive(Debug, Clone)]
 pub struct Annotation {
     pub folder: String,
@@ -45,6 +51,7 @@ pub struct Annotation {
     pub segmented: Option<bool>,
 }
 
+/// Parse annotation XML to Annotation struct.
 pub fn parse_anntation_xml(content: &str) -> Fallible<Annotation> {
     let root: Element = content.parse()?;
     ensure!(root.name() == "annotation", "Expect <annotation> root element");
@@ -105,7 +112,7 @@ pub fn parse_anntation_xml(content: &str) -> Fallible<Annotation> {
     Ok(annotation)
 }
 
-pub fn parse_size_elem(size_elem: &Element) -> Fallible<(f64, f64, f64)> {
+fn parse_size_elem(size_elem: &Element) -> Fallible<(f64, f64, f64)> {
     let mut width = None;
     let mut height = None;
     let mut depth = None;
@@ -149,7 +156,7 @@ pub fn parse_size_elem(size_elem: &Element) -> Fallible<(f64, f64, f64)> {
     Ok((width.unwrap(), height.unwrap(), depth.unwrap()))
 }
 
-pub fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
+fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
     let mut name = None;
     // let mut actions = None;
     let mut bndbox = None;
@@ -326,7 +333,7 @@ pub fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
     Ok(object)
 }
 
-pub fn parse_source_elem(source_elem: &Element) -> Fallible<Source> {
+fn parse_source_elem(source_elem: &Element) -> Fallible<Source> {
     let mut database = None;
     let mut annotation = None;
     let mut image = None;
@@ -375,7 +382,7 @@ pub fn parse_source_elem(source_elem: &Element) -> Fallible<Source> {
     Ok(source)
 }
 
-pub fn parse_bndbox_elem(object_elem: &Element) -> Fallible<BndBox> {
+fn parse_bndbox_elem(object_elem: &Element) -> Fallible<BndBox> {
     let mut xmin = None;
     let mut ymin = None;
     let mut xmax = None;

@@ -1,3 +1,6 @@
+/// Simple loader for the PASCAL Visual Object Classes (VOC)
+///
+/// This crate supports dataset formats from VOC2007 to VOC2012.
 extern crate glob;
 extern crate minidom;
 #[macro_use] extern crate log;
@@ -18,12 +21,14 @@ pub use crate::parse::{
     Annotation,
 };
 
+/// The sample corresponds to an image along with annotations
 #[derive(Debug, Clone)]
 pub struct Sample {
     pub image_path: PathBuf,
     pub annotation: Annotation,
 }
 
+/// Load VOC data directory
 pub fn load<P: AsRef<Path>>(dataset_dir: P) -> Fallible<Vec<Sample>> {
     let dataset_dir_r = dataset_dir.as_ref();
     let image_dir = dataset_dir_r.join("JPEGImages");

@@ -1,5 +1,4 @@
 use std::path::{Path, PathBuf};
-use std::ffi::{OsStr, OsString};
 use failure::Error;
 
 #[derive(Debug, Fail)]
