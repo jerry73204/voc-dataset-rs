@@ -3,23 +3,19 @@
 /// This crate supports dataset formats from VOC2007 to VOC2012.
 extern crate glob;
 extern crate minidom;
-#[macro_use] extern crate log;
-#[macro_use] extern crate failure;
+#[macro_use]
+extern crate log;
+#[macro_use]
+extern crate failure;
 
-mod parse;
 pub mod error;
+mod parse;
 
-use std::path::{Path, PathBuf};
 use failure::{Error, Fallible};
+use std::path::{Path, PathBuf};
 
 pub use crate::error::ParseAnnotationError;
-pub use crate::parse::{
-    parse_anntation_xml,
-    BndBox,
-    Object,
-    Source,
-    Annotation,
-};
+pub use crate::parse::{parse_anntation_xml, Annotation, BndBox, Object, Source};
 
 /// The sample corresponds to an image along with annotations
 #[derive(Debug, Clone)]
@@ -49,12 +45,10 @@ pub fn load<P: AsRef<Path>>(dataset_dir: P) -> Fallible<Vec<Sample>> {
             }
             Ok(None)
         })
-        .filter_map(|arg| {
-            match arg {
-                Ok(None) => None,
-                Ok(Some(pair)) => Some(Ok(pair)),
-                Err(err) => Some(Err(err)),
-            }
+        .filter_map(|arg| match arg {
+            Ok(None) => None,
+            Ok(Some(pair)) => Some(Ok(pair)),
+            Err(err) => Some(Err(err)),
         })
         .map(|arg| {
             let (image_name, image_path) = arg?;

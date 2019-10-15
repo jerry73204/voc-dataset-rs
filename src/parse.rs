@@ -1,11 +1,15 @@
-use std::collections::HashMap;
 use failure::Fallible;
 use minidom::Element;
+use std::collections::HashMap;
 
 /// Correspond to <pose> in annotation XML.
 #[derive(Debug, Clone, Copy)]
 pub enum Pose {
-    Frontal, Rear, Left, Right, Unspecified,
+    Frontal,
+    Rear,
+    Left,
+    Right,
+    Unspecified,
 }
 
 /// Correspond to <bndbox> in annotation XML.
@@ -53,8 +57,13 @@ pub struct Annotation {
 
 /// Parse annotation XML to Annotation struct.
 pub fn parse_anntation_xml(content: &str) -> Fallible<Annotation> {
-    let root: Element = content.parse()?;
-    ensure!(root.name() == "annotation", "Expect <annotation> root element");
+    let root: Element = content
+        .parse()
+        .map_err(|err| format_err!("Failed to parse annotation XML: {:?}", err))?;
+    ensure!(
+        root.name() == "annotation",
+        "Expect <annotation> root element"
+    );
 
     let mut folder = None;
     let mut filename = None;
@@ -65,18 +74,18 @@ pub fn parse_anntation_xml(content: &str) -> Fallible<Annotation> {
 
     for annotation_child in root.children() {
         match annotation_child.name() {
-            "folder" =>  match folder {
+            "folder" => match folder {
                 Some(_) => bail!("<folder> is duplicated in <annotation>"),
                 None => folder = Some(annotation_child.text()),
             },
             "filename" => match filename {
                 Some(_) => bail!("<filename> is duplicated in <annotation>"),
                 None => filename = Some(annotation_child.text()),
-            }
+            },
             "size" => match size {
                 Some(_) => bail!("<size> is duplicated in <annotation>"),
                 None => size = Some(parse_size_elem(annotation_child)?),
-            }
+            },
             "object" => {
                 let object = parse_object_elem(annotation_child)?;
                 objects.push(object);
@@ -88,14 +97,17 @@ pub fn parse_anntation_xml(content: &str) -> Fallible<Annotation> {
                 let val = match annotation_child.text().as_str() {
                     "0" => false,
                     "1" => true,
-                    _ => bail!("expect 0 or 1 in <segmented>, but get {}", annotation_child.text()),
+                    _ => bail!(
+                        "expect 0 or 1 in <segmented>, but get {}",
+                        annotation_child.text()
+                    ),
                 };
                 segmented = Some(val);
             }
             "source" => match source {
                 Some(_) => bail!("<source> is duplicated in <annotation>"),
                 None => source = Some(parse_source_elem(annotation_child)?),
-            }
+            },
             _ => bail!("Unexpected <{}> in <annotation>", annotation_child.name()),
         }
     }
@@ -119,25 +131,22 @@ fn parse_size_elem(size_elem: &Element) -> Fallible<(f64, f64, f64)> {
 
     for size_child in size_elem.children() {
         match size_child.name() {
-            "width" => {
-                match width {
-                    Some(_) => bail!("<width> is duplicated in <size>"),
-                    None => width = Some(size_child.text().parse()?),
-                }
-            }
-            "height" => {
-                match height {
-                    Some(_) => bail!("<height> is duplicated in <size>"),
-                    None => height = Some(size_child.text().parse()?),
-                }
-            }
-            "depth" => {
-                match depth {
-                    Some(_) => bail!("<depth> is duplicated in <size>"),
-                    None => depth = Some(size_child.text().parse()?),
-                }
-            }
-            _ => bail!("Unexpected <{:?}> element found in <size>", size_child.name()),
+            "width" => match width {
+                Some(_) => bail!("<width> is duplicated in <size>"),
+                None => width = Some(size_child.text().parse()?),
+            },
+            "height" => match height {
+                Some(_) => bail!("<height> is duplicated in <size>"),
+                None => height = Some(size_child.text().parse()?),
+            },
+            "depth" => match depth {
+                Some(_) => bail!("<depth> is duplicated in <size>"),
+                None => depth = Some(size_child.text().parse()?),
+            },
+            _ => bail!(
+                "Unexpected <{:?}> element found in <size>",
+                size_child.name()
+            ),
         }
     }
 
@@ -193,7 +202,10 @@ fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
                 let val = match object_child.text().as_str() {
                     "0" => false,
                     "1" => true,
-                    _ => bail!("expect 0 or 1 in <difficult>, but get {}", object_child.text()),
+                    _ => bail!(
+                        "expect 0 or 1 in <difficult>, but get {}",
+                        object_child.text()
+                    ),
                 };
 
                 difficult = Some(val);
@@ -206,7 +218,10 @@ fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
                 let val = match object_child.text().as_str() {
                     "0" => false,
                     "1" => true,
-                    _ => bail!("expect 0 or 1 in <truncated>, but get {}", object_child.text()),
+                    _ => bail!(
+                        "expect 0 or 1 in <truncated>, but get {}",
+                        object_child.text()
+                    ),
                 };
 
                 truncated = Some(val);
@@ -219,7 +234,10 @@ fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
                 let val = match object_child.text().as_str() {
                     "0" => false,
                     "1" => true,
-                    _ => bail!("expect 0 or 1 in <occluded>, but get {}", object_child.text()),
+                    _ => bail!(
+                        "expect 0 or 1 in <occluded>, but get {}",
+                        object_child.text()
+                    ),
                 };
 
                 occluded = Some(val);
@@ -340,23 +358,17 @@ fn parse_source_elem(source_elem: &Element) -> Fallible<Source> {
 
     for source_child in source_elem.children() {
         match source_child.name() {
-            "database" => {
-                match database {
-                    Some(_) => bail!("duplicated <database> in <source>"),
-                    None => database = Some(source_child.text()),
-                }
+            "database" => match database {
+                Some(_) => bail!("duplicated <database> in <source>"),
+                None => database = Some(source_child.text()),
             },
-            "annotation" => {
-                match annotation {
-                    Some(_) => bail!("duplicated <annotation> in <source>"),
-                    None => annotation = Some(source_child.text()),
-                }
+            "annotation" => match annotation {
+                Some(_) => bail!("duplicated <annotation> in <source>"),
+                None => annotation = Some(source_child.text()),
             },
-            "image" => {
-                match image {
-                    Some(_) => bail!("duplicated <image> in <source>"),
-                    None => image = Some(source_child.text()),
-                }
+            "image" => match image {
+                Some(_) => bail!("duplicated <image> in <source>"),
+                None => image = Some(source_child.text()),
             },
             _ => bail!("Unexpected <{}> in <source>", source_child.name()),
         }

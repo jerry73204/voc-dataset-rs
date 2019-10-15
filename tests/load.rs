@@ -1,15 +1,17 @@
 extern crate pretty_env_logger;
-#[macro_use] extern crate log;
-extern crate tempdir;
+#[macro_use]
+extern crate log;
 extern crate reqwest;
-#[macro_use] extern crate failure;
+extern crate tempdir;
+#[macro_use]
+extern crate failure;
 
-use std::fs::File;
-use std::path::PathBuf;
-use std::io::{prelude::*, BufReader, SeekFrom};
-use failure::Fallible;
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
+use failure::Fallible;
+use std::fs::File;
+use std::io::{prelude::*, BufReader, SeekFrom};
+use std::path::PathBuf;
 use tar::Archive;
 
 #[test]
@@ -20,7 +22,6 @@ fn load_voc_2012() -> Fallible<()> {
     let cargo_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let test_data_dir = cargo_dir.join("test_data");
     std::fs::create_dir_all(&test_data_dir)?;
-
 
     // Prepare VOC 2012 dataset
     let file_path = test_data_dir.join("VOCtrainval_11-May-2012.tar");
@@ -34,10 +35,11 @@ fn load_voc_2012() -> Fallible<()> {
         info!("Downloading VOC 2012 dataset...");
 
         let mut file = File::create(&file_path)?;
-        let mut resp = reqwest::get("http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar")?;
+        let mut resp = reqwest::get(
+            "http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar",
+        )?;
         std::io::copy(&mut resp, &mut file)?;
     }
-
 
     // Verify digest
     info!("Verify file checksum");
@@ -83,7 +85,11 @@ fn load_voc_2012() -> Fallible<()> {
     let samples = voc_dataset::load(&voc_dir)?;
 
     let n_samples = samples.len();
-    ensure!(17125 == n_samples, "Number of samples mismatches. Expect 17125 samples, but get {}", n_samples);
+    ensure!(
+        17125 == n_samples,
+        "Number of samples mismatches. Expect 17125 samples, but get {}",
+        n_samples
+    );
 
     Ok(())
 }

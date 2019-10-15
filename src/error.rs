@@ -1,5 +1,5 @@
-use std::path::{Path, PathBuf};
 use failure::Error;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Fail)]
 #[fail(display = "Cannot parse file {:?}: {}", path, error)]
