@@ -1,21 +1,15 @@
-extern crate pretty_env_logger;
-#[macro_use]
-extern crate log;
-extern crate reqwest;
-extern crate tempdir;
-#[macro_use]
-extern crate failure;
-
-use crypto::digest::Digest;
-use crypto::sha2::Sha256;
-use failure::Fallible;
-use std::fs::File;
-use std::io::{prelude::*, BufReader, SeekFrom};
-use std::path::PathBuf;
+use anyhow::{bail, ensure, Result};
+use crypto::{digest::Digest, sha2::Sha256};
+use log::info;
+use std::{
+    fs::File,
+    io::{prelude::*, BufReader, SeekFrom},
+    path::PathBuf,
+};
 use tar::Archive;
 
 #[test]
-fn load_voc_2012() -> Fallible<()> {
+fn load_voc_2012() -> Result<()> {
     pretty_env_logger::init();
 
     // Prepare test data directory

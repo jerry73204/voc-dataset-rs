@@ -1,21 +1,13 @@
-/// Simple loader for the PASCAL Visual Object Classes (VOC)
-///
-/// This crate supports dataset formats from VOC2007 to VOC2012.
-extern crate glob;
-extern crate minidom;
-#[macro_use]
-extern crate log;
-#[macro_use]
-extern crate failure;
+//! Simple loader for the PASCAL Visual Object Classes (VOC)
+//!
+//! This crate supports dataset formats from VOC2007 to VOC2012.
 
-pub mod error;
+mod common;
 mod parse;
 
-use failure::{Error, Fallible};
-use std::path::{Path, PathBuf};
-
-pub use crate::error::ParseAnnotationError;
 pub use crate::parse::{parse_anntation_xml, Annotation, BndBox, Object, Source};
+
+use crate::common::*;
 
 /// The sample corresponds to an image along with annotations
 #[derive(Debug, Clone)]
@@ -25,14 +17,14 @@ pub struct Sample {
 }
 
 /// Load VOC data directory
-pub fn load<P: AsRef<Path>>(dataset_dir: P) -> Fallible<Vec<Sample>> {
+pub fn load<P: AsRef<Path>>(dataset_dir: P) -> Result<Vec<Sample>> {
     let dataset_dir_r = dataset_dir.as_ref();
     let image_dir = dataset_dir_r.join("JPEGImages");
     let annotations_dir = dataset_dir_r.join("Annotations");
 
     let samples = image_dir
         .read_dir()?
-        .map(|entry_result| -> Fallible<Option<_>> {
+        .map(|entry_result| -> Result<Option<_>> {
             let entry = entry_result?;
             if entry.file_type()?.is_file() {
                 let path = entry.path();
@@ -57,11 +49,10 @@ pub fn load<P: AsRef<Path>>(dataset_dir: P) -> Fallible<Vec<Sample>> {
             info!("Loading {}", xml_path.display());
 
             // File annotation xml
-            let content = std::fs::read_to_string(&xml_path)?;
-            let annotation = match parse::parse_anntation_xml(&content) {
-                Ok(result) => result,
-                Err(err) => return Err(Error::from(ParseAnnotationError::new(&xml_path, err))),
-            };
+            let content = std::fs::read_to_string(&xml_path)
+                .with_context(|| format!("cannot open file {}", xml_path.display()))?;
+            let annotation = parse::parse_anntation_xml(&content)
+                .with_context(|| format!("failed to parse file {}", xml_path.display()))?;
 
             // Verify if filename matches
             let mut file_name = image_name.clone();

@@ -1,6 +1,4 @@
-use failure::Fallible;
-use minidom::Element;
-use std::collections::HashMap;
+use crate::common::*;
 
 /// Correspond to <pose> in annotation XML.
 #[derive(Debug, Clone, Copy)]
@@ -56,7 +54,7 @@ pub struct Annotation {
 }
 
 /// Parse annotation XML to Annotation struct.
-pub fn parse_anntation_xml(content: &str) -> Fallible<Annotation> {
+pub fn parse_anntation_xml(content: &str) -> Result<Annotation> {
     let root: Element = content
         .parse()
         .map_err(|err| format_err!("Failed to parse annotation XML: {:?}", err))?;
@@ -124,7 +122,7 @@ pub fn parse_anntation_xml(content: &str) -> Fallible<Annotation> {
     Ok(annotation)
 }
 
-fn parse_size_elem(size_elem: &Element) -> Fallible<(f64, f64, f64)> {
+fn parse_size_elem(size_elem: &Element) -> Result<(f64, f64, f64)> {
     let mut width = None;
     let mut height = None;
     let mut depth = None;
@@ -165,7 +163,7 @@ fn parse_size_elem(size_elem: &Element) -> Fallible<(f64, f64, f64)> {
     Ok((width.unwrap(), height.unwrap(), depth.unwrap()))
 }
 
-fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
+fn parse_object_elem(object_elem: &Element) -> Result<Object> {
     let mut name = None;
     // let mut actions = None;
     let mut bndbox = None;
@@ -351,7 +349,7 @@ fn parse_object_elem(object_elem: &Element) -> Fallible<Object> {
     Ok(object)
 }
 
-fn parse_source_elem(source_elem: &Element) -> Fallible<Source> {
+fn parse_source_elem(source_elem: &Element) -> Result<Source> {
     let mut database = None;
     let mut annotation = None;
     let mut image = None;
@@ -394,7 +392,7 @@ fn parse_source_elem(source_elem: &Element) -> Fallible<Source> {
     Ok(source)
 }
 
-fn parse_bndbox_elem(object_elem: &Element) -> Fallible<BndBox> {
+fn parse_bndbox_elem(object_elem: &Element) -> Result<BndBox> {
     let mut xmin = None;
     let mut ymin = None;
     let mut xmax = None;
