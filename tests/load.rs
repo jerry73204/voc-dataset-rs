@@ -75,6 +75,7 @@ fn load_voc_2012() -> Result<()> {
         tarball.unpack(&test_data_dir)?;
     };
 
+    info!("Parsing dataset");
     let voc_dir = test_data_dir.join("VOCdevkit").join("VOC2012");
     let samples = voc_dataset::load(&voc_dir)?;
 

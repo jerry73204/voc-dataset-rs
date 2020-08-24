@@ -3,9 +3,9 @@
 //! This crate supports dataset formats from VOC2007 to VOC2012.
 
 mod common;
-mod parse;
+mod types;
 
-pub use crate::parse::{parse_anntation_xml, Annotation, BndBox, Object, Source};
+pub use crate::types::{Annotation, BndBox, Object, Source};
 
 use crate::common::*;
 
@@ -49,9 +49,9 @@ pub fn load<P: AsRef<Path>>(dataset_dir: P) -> Result<Vec<Sample>> {
             info!("Loading {}", xml_path.display());
 
             // File annotation xml
-            let content = std::fs::read_to_string(&xml_path)
+            let content = fs::read_to_string(&xml_path)
                 .with_context(|| format!("cannot open file {}", xml_path.display()))?;
-            let annotation = parse::parse_anntation_xml(&content)
+            let annotation: Annotation = serde_xml_rs::from_str(&content)
                 .with_context(|| format!("failed to parse file {}", xml_path.display()))?;
 
             // Verify if filename matches
