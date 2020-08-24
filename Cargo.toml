@@ -10,7 +10,7 @@ repository = "https://github.com/jerry73204/voc-dataset-rs"
 documentation = "https://docs.rs/voc-dataset/"
 keywords = ["dataset", "VOC"]
 categories = ["science"]
-license-file = "LICENSE.txt"
+license = "MIT"
 readme = "README.md"
 
 [dependencies]

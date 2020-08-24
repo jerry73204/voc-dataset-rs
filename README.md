@@ -1,6 +1,12 @@
 # Simple data loader for The PASCAL Visual Object Classes (VOC)
 
-This crate supports VOC2007 to VOC2012 dataset format.
+This crate defines annotation XML types for VOC dataset.
+
+You can import this crate from crates.io.
+
+```toml
+voc-dataset = "0.2"
+```
 
 ## Usage
 
