@@ -35,7 +35,7 @@ fn load_voc_2012() -> Fallible<()> {
         info!("Downloading VOC 2012 dataset...");
 
         let mut file = File::create(&file_path)?;
-        let mut resp = reqwest::get(
+        let mut resp = reqwest::blocking::get(
             "http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar",
         )?;
         std::io::copy(&mut resp, &mut file)?;
