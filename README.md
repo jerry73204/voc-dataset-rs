@@ -20,8 +20,6 @@ for sample in samples.iter() {
 If you would like to parse a single annotation XML:
 
 ```rust
-extern crate voc_dataset;
-
 let xml = "...";  // annotation XML data
 let annotation = parse_anntation_xml(xml)?;
 ```
