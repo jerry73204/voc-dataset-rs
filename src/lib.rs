@@ -3,9 +3,9 @@
 //! This crate supports dataset formats from VOC2007 to VOC2012.
 
 mod common;
-mod types;
+pub mod types;
 
-pub use crate::types::{Annotation, BndBox, Object, Source};
+pub use crate::types::*;
 
 use crate::common::*;
 
