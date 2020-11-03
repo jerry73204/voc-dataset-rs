@@ -10,7 +10,7 @@ pub use crate::types::*;
 use crate::common::*;
 
 /// The sample corresponds to an image along with annotations
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Sample {
     pub image_path: PathBuf,
     pub annotation: Annotation,
