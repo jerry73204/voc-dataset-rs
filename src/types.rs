@@ -1,7 +1,7 @@
 use crate::common::*;
 
 /// Correspond to <pose> in annotation XML.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "pose")]
 pub enum Pose {
     Frontal,
@@ -12,7 +12,7 @@ pub enum Pose {
 }
 
 /// Correspond to <bndbox> in annotation XML.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "bndbox")]
 pub struct BndBox {
     pub xmin: R64,
@@ -22,7 +22,7 @@ pub struct BndBox {
 }
 
 /// Correspond to <size> in annotation XML.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "size")]
 pub struct Size {
     pub width: usize,
@@ -31,7 +31,7 @@ pub struct Size {
 }
 
 /// Correspond to <size> in annotation XML.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "point")]
 pub struct Point {
     pub x: usize,
@@ -39,7 +39,7 @@ pub struct Point {
 }
 
 /// Correspond to <object> in annotation XML.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "object")]
 pub struct Object {
     pub name: String,
@@ -55,7 +55,7 @@ pub struct Object {
 }
 
 /// Correspond to <part> in annotation XML.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "part")]
 pub struct Part {
     pub name: String,
@@ -63,7 +63,7 @@ pub struct Part {
 }
 
 /// Correspond to <source> in annotation XML.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "source")]
 pub struct Source {
     pub database: String,
@@ -72,7 +72,7 @@ pub struct Source {
 }
 
 /// Parsed annotation XML.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "annotation")]
 pub struct Annotation {
     pub filename: String,
@@ -84,7 +84,7 @@ pub struct Annotation {
     pub source: Source,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename = "actions")]
 pub struct Actions {
     pub jumping: bool,
